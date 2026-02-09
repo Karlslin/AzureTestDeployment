@@ -1,3 +1,4 @@
+
 Azure Terraform Demo Deployment
 
 This project deploys a basic Azure infrastructure using Terraform.
@@ -20,3 +21,4 @@ Terraform
 AzureRM Provider
 Azure CLI
 Infrastructure as Code
+
