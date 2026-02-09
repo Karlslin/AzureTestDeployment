@@ -20,4 +20,7 @@ Tech Stack,
 Terraform,
 AzureRM Provider,
 Azure CLI,
-Infrastructure as Code,
+Infrastructure as Code
+
+Handled Azure SKU capacity and lifecycle lock during region migration
+germanywestcentral --> northeurope due to capacity limits
