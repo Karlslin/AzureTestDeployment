@@ -26,7 +26,7 @@ resource "azurerm_network_security_group" "nsg" {
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
 
-# Port 22
+  # Port 22
   security_rule {
     name                       = "allow-ssh"
     priority                   = 100
@@ -39,17 +39,17 @@ resource "azurerm_network_security_group" "nsg" {
     destination_address_prefix = "*"
   }
 
-# Port 80
-security_rule {
-  name                       = "allow-http"
-  priority                   = 110
-  direction                  = "Inbound"
-  access                     = "Allow"
-  protocol                   = "Tcp"
-  source_port_range          = "*"
-  destination_port_range     = "80"
-  source_address_prefix      = "*"
-  destination_address_prefix = "*"
+  # Port 80
+  security_rule {
+    name                       = "allow-http"
+    priority                   = 110
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_range     = "80"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
   }
 }
 
@@ -84,12 +84,16 @@ resource "azurerm_network_interface" "nic" {
 
 # Linux VM hinzufügen
 resource "azurerm_linux_virtual_machine" "vm" {
-  name                = "demo-vm"
+  name                = var.vm_name
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
-  size                = "Standard_D2s_v3"
-  admin_username      = "azureuser"
-  custom_data = filebase64("${path.module}/cloud-init.yaml")
+  size                = var.vm_size
+  admin_username      = var.admin_username
+  custom_data = base64encode(
+    templatefile("${path.module}/cloud-init.tpl.yaml", {
+      html_b64 = base64encode(file("${path.module}/website/index.html"))
+    })
+  )
 
 
   network_interface_ids = [
@@ -98,7 +102,8 @@ resource "azurerm_linux_virtual_machine" "vm" {
 
   admin_ssh_key {
     username   = "azureuser"
-    public_key = file("C:/Users/nilsb/.ssh/id_rsa.pub")
+    public_key = file(var.ssh_public_key_path)
+
   }
 
   os_disk {
@@ -112,6 +117,7 @@ resource "azurerm_linux_virtual_machine" "vm" {
     sku       = "22_04-lts"
     version   = "latest"
   }
+
 }
 
 

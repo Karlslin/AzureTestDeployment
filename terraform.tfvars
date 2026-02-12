@@ -1,0 +1,6 @@
+resource_group_name = "demo-resourcegroup"
+location            = "northeurope"
+vm_name             = "demo-vm"
+vm_size             = "Standard_D2s_v3"
+admin_username      = "azureuser"
+ssh_public_key_path = "C:/Users/nilsb/.ssh/id_rsa.pub"
