@@ -21,15 +21,15 @@ resource "azurerm_subnet" "subnet" {
 }
 
 # Security Group erstellen
-
 resource "azurerm_network_security_group" "nsg" {
   name                = "demo-nsg"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
 
+# Port 22
   security_rule {
     name                       = "allow-ssh"
-    priority                   = 1001
+    priority                   = 100
     direction                  = "Inbound"
     access                     = "Allow"
     protocol                   = "Tcp"
@@ -37,6 +37,19 @@ resource "azurerm_network_security_group" "nsg" {
     destination_port_range     = "22"
     source_address_prefix      = "*"
     destination_address_prefix = "*"
+  }
+
+# Port 80
+security_rule {
+  name                       = "allow-http"
+  priority                   = 110
+  direction                  = "Inbound"
+  access                     = "Allow"
+  protocol                   = "Tcp"
+  source_port_range          = "*"
+  destination_port_range     = "80"
+  source_address_prefix      = "*"
+  destination_address_prefix = "*"
   }
 }
 
@@ -69,13 +82,15 @@ resource "azurerm_network_interface" "nic" {
   }
 }
 
-# Erste Linux VM hinzufügen
+# Linux VM hinzufügen
 resource "azurerm_linux_virtual_machine" "vm" {
   name                = "demo-vm"
   resource_group_name = azurerm_resource_group.rg.name
   location            = azurerm_resource_group.rg.location
   size                = "Standard_D2s_v3"
   admin_username      = "azureuser"
+  custom_data = filebase64("${path.module}/cloud-init.yaml")
+
 
   network_interface_ids = [
     azurerm_network_interface.nic.id
@@ -98,3 +113,5 @@ resource "azurerm_linux_virtual_machine" "vm" {
     version   = "latest"
   }
 }
+
+
