@@ -1,3 +1,11 @@
+data "http" "my_public_ip" {
+  url = "https://ifconfig.me/ip"
+}
+
+locals {
+  prefix = "demo"
+}
+
 # Resource Group
 resource "azurerm_resource_group" "rg" {
   name     = var.resource_group_name
@@ -35,7 +43,7 @@ resource "azurerm_network_security_group" "nsg" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_range     = "22"
-    source_address_prefix      = "*"
+    source_address_prefix      = "${data.http.my_public_ip.response_body}/32"
     destination_address_prefix = "*"
   }
 
@@ -61,12 +69,15 @@ resource "azurerm_subnet_network_security_group_association" "assoc" {
 
 # Public IP erstellen
 resource "azurerm_public_ip" "pip" {
-  name                = "demo-pip"
+  name                = "${local.prefix}-pip"
   location            = azurerm_resource_group.rg.location
   resource_group_name = azurerm_resource_group.rg.name
   allocation_method   = "Static"
   sku                 = "Standard"
+
+  domain_name_label   = "${local.prefix}-nils-lab"
 }
+
 
 # Network Interface erstellen
 resource "azurerm_network_interface" "nic" {

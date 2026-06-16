@@ -11,7 +11,7 @@ The goal of this project is to demonstrate practical cloud engineering skills:
 * Debugging cloud-init and networking issues
 * Reproducible deployments
 
----
+
 
 ## Architecture
 
@@ -30,63 +30,53 @@ At first boot, cloud-init:
 * deploys a custom website from the repository
 * starts the webserver
 
----
+
 
 ## Deployment
 
 Login to Azure:
 
-```
 az login
-```
+
 
 Initialize Terraform:
 
-```
 terraform init
-```
+
 
 Review deployment plan:
 
-```
 terraform plan
-```
+
 
 Apply infrastructure:
 
-```
 terraform apply
-```
 
----
+
 
 ## Accessing the Server
 
 After deployment Terraform outputs:
 
-```
 terraform output
-```
+
 
 Open website in browser:
 
-```
 http://<public_ip>
-```
+
 
 SSH into server:
 
-```
 ssh azureuser@<public_ip>
-```
+
 
 If the VM was recreated:
 
-```
 ssh-keygen -R <public_ip>
-```
 
----
+
 
 ## Troubleshooting
 
@@ -94,27 +84,20 @@ ssh-keygen -R <public_ip>
 
 Check nginx:
 
-```
 sudo systemctl status nginx
-```
+
 
 Check local HTTP:
 
-```
 curl -I http://localhost
-```
 
----
 
 ### cloud-init debugging
 
 If software is missing after deployment:
 
-```
 sudo cat /var/log/cloud-init-output.log
-```
 
----
 
 ### Networking issues
 
@@ -123,19 +106,24 @@ Verify open ports:
 * SSH: 22
 * HTTP: 80
 
----
 
 ## Project Structure
 
-```
 templates/          cloud-init configuration
 website/            deployed webpage
 variables.tf        configurable values
 outputs.tf          connection helpers
 main.tf             infrastructure definition
-```
 
----
+
+## Design Decisions
+
+1. Dynamic Security & Least Privilege (SSH Access)
+To prevent brute-force attacks and avoid leaving SSH (Port 22) exposed to the public internet, the Network Security Group (NSG) is dynamically secured. Using a Terraform http data source, the inbound rule is strictly limited to the specific public IP address of the machine executing the deployment (/32 CIDR). This ensures secure access without hardcoding IP addresses.
+
+2. Zero-Touch Provisioning (cloud-init)
+Instead of manually connecting to the server post-deployment to install dependencies, NGINX and the custom web payload are configured automatically via cloud-init (passed via the custom_data attribute). This enables a fully automated bootstrapping pipeline, ensuring the infrastructure is immutable, reproducible, and ready to serve traffic immediately after the first boot without any manual overhead.
+
 
 ## Concepts Demonstrated
 
@@ -146,7 +134,7 @@ cloud-init configures the machine
 
 Infrastructure becomes reproducible and disposable.
 
----
+
 
 ## Learning Notes
 
@@ -157,7 +145,6 @@ Common real-world issues encountered during this project:
 * YAML parsing failures in cloud-init
 * Network security group misconfiguration
 
----
 
 ## Future Improvements
 
