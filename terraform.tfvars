@@ -1,5 +1,5 @@
-resource_group_name = "demo-resourcegroup"
-location            = "northeurope"
+resource_group_name = "demo-lab"
+location            = "westeurope"
 vm_name             = "demo-vm"
 vm_size             = "Standard_D2s_v3"
 admin_username      = "azureuser"

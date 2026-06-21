@@ -1,5 +1,5 @@
 data "http" "my_public_ip" {
-  url = "https://ifconfig.me/ip"
+  url = "https://api.ipify.org"
 }
 
 locals {

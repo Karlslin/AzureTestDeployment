@@ -22,3 +22,13 @@ output "ssh_command_windows" {
   description = "SSH command for Windows PowerShell (adjust -i path if needed)"
   value       = "ssh -i C:\\\\Users\\\\nilsb\\\\.ssh\\\\id_rsa ${var.admin_username}@${azurerm_public_ip.pip.ip_address}"
 }
+
+output "fqdn" {
+  description = "Azure-provided DNS name for the public IP"
+  value       = azurerm_public_ip.pip.fqdn
+}
+
+output "website_url_fqdn" {
+  description = "Website URL via FQDN"
+  value       = "http://${azurerm_public_ip.pip.fqdn}"
+}

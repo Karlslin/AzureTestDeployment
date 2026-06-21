@@ -1,13 +1,13 @@
 variable "resource_group_name" {
   description = "Name der Resource Group"
   type        = string
-  default     = "demo-resourcegroup"
+  default     = "demo-lab"
 }
 
 variable "location" {
   description = "Azure Region (z.B. northeurope, westeurope)"
   type        = string
-  default     = "northeurope"
+  default     = "westeurope"
 }
 
 variable "vm_name" {
